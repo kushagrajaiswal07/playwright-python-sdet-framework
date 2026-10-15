@@ -1,0 +1,26 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# Environment variables
+.env
+
+# Test reports
+reports/
+
+# Screenshots
+screenshots/
+
+# Playwright test results and traces
+test-results/
+playwright-report/
+
+# VS Code workspace settings
+.vscode/
