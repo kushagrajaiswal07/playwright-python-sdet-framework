@@ -1,3 +1,4 @@
+
 import pytest
 from pathlib import Path
 from playwright.sync_api import Page
@@ -6,9 +7,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 @pytest.fixture
 def api_base_url():
-    return os.getenv("API_BASE_URL")
+    return os.getenv(
+        "API_BASE_URL",
+        "https://jsonplaceholder.typicode.com"
+    )
+
 
 @pytest.fixture
 def login(page: Page):
@@ -35,9 +41,3 @@ def pytest_runtest_makereport(item, call):
                 path=f"screenshots/{item.name}.png",
                 full_page=True
             )
-
-
-
-@pytest.fixture
-def api_base_url():
-    return "https://jsonplaceholder.typicode.com"
