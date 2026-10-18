@@ -1,52 +1,63 @@
 # Playwright Python SDET Framework
 
-A beginner-friendly Software Development Engineer in Test (SDET) project built using Python, Playwright, Pytest, and Requests. This project demonstrates UI automation, API testing, reusable fixtures, test reporting, and Continuous Integration using GitHub Actions.
+A hands-on test automation project built with **Python, Playwright, Pytest, and Requests**. It demonstrates browser-based UI testing, REST API testing, the Page Object Model (POM), reusable fixtures, test data, failure screenshots, and continuous integration with GitHub Actions.
+
+> **Project goal:** Practice skills used in QA Automation Engineer and SDET roles through a maintainable, beginner-friendly test suite.
+
+## What This Project Tests
+
+### UI automation — SauceDemo
+
+The browser tests cover key shopping workflows on [SauceDemo](https://www.saucedemo.com/):
+
+- Successful login
+- Invalid credentials and locked-out user validation
+- Product listing count
+- Product sorting by name and price
+- Adding and removing products from the cart
+- Empty-cart behavior
+- Completing checkout
+- Required checkout-field validation
+
+### REST API testing — JSONPlaceholder
+
+API tests use [JSONPlaceholder](https://jsonplaceholder.typicode.com/) as a practice API and cover:
+
+- GET requests for individual and multiple posts
+- Existing and nonexistent resource IDs
+- Response status codes and JSON structure
+- Response field types and values
+- POST resource creation
+- PUT full updates and PATCH partial updates
+- DELETE requests
+- Content type and response-header checks
+- Basic response-time assertion
+- Parameterized tests for multiple resource IDs
+
+**Note:** JSONPlaceholder is a demo API. Write operations are simulated; they do not persistently modify the public dataset.
+
+## Framework Features
+
+- **Page Object Model (POM):** UI actions are organized into page classes under `pages/`.
+- **Pytest fixtures:** Shared browser setup and login setup reduce repeated test code.
+- **API configuration:** The API base URL is supplied through the `api_base_url` fixture.
+- **Reusable test data:** Example API payloads are kept in `tests/test_data.py`.
+- **Failure screenshots:** A screenshot is saved when a UI test fails and a Playwright page is available.
+- **HTML reporting:** `pytest-html` is included so a report can be generated locally.
+- **Continuous integration:** GitHub Actions installs the dependencies and Chromium, then runs the test suite on pushes and pull requests.
 
 ## Tech Stack
 
-- **Python** — Programming language
-- **Playwright** — Web UI automation
-- **Pytest** — Test execution and fixtures
-- **Requests** — REST API testing
-- **Git & GitHub** — Version control
-- **GitHub Actions** — Continuous Integration (CI)
-- **Pytest HTML** — HTML test reports
-- **python-dotenv** — Environment variable management
-
-## Project Features
-
-### 1. UI Automation
-Automated end-to-end tests for [SauceDemo](https://www.saucedemo.com/).
-
-- Login with valid credentials
-- Invalid password validation
-- Locked-out user validation
-- Product listing verification
-- Product sorting by name and price
-- Add and remove products from cart
-- Cart validation
-- Checkout flow and required-field validation
-
-### 2. API Testing
-Automated REST API tests using [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
-
-- GET requests and response validation
-- Validation of existing and nonexistent resource IDs
-- POST requests for resource creation
-- PUT requests for full updates
-- PATCH requests for partial updates
-- DELETE requests
-- Response status codes, headers, content type, and response time checks
-
-### 3. Test Framework Features
-
-- Reusable Pytest fixtures
-- Centralized test configuration
-- Reusable API test data
-- Automatic screenshots on test failures
-- HTML test report generation
-- Environment-based configuration using `.env`
-- Automated test execution through GitHub Actions
+| Tool | Purpose |
+|---|---|
+| Python | Test code |
+| Playwright | Browser automation |
+| Pytest | Test runner, assertions, fixtures, and parametrization |
+| Requests | REST API requests |
+| pytest-html | Optional HTML test reports |
+| python-dotenv | Loading environment variables |
+| Git and GitHub | Version control and repository hosting |
+| GitHub Actions | Automated CI test runs |
 
 ## Project Structure
 
@@ -56,6 +67,10 @@ playwright-python-sdet-framework/
 │   └── workflows/
 │       └── tests.yml
 ├── pages/
+│   ├── login_page.py
+│   ├── products_page.py
+│   ├── cart_page.py
+│   └── checkout_page.py
 ├── tests/
 │   ├── test_login.py
 │   ├── test_products.py
@@ -63,23 +78,14 @@ playwright-python-sdet-framework/
 │   ├── test_checkout.py
 │   ├── test_api.py
 │   └── test_data.py
-├── reports/
-├── screenshots/
-├── .env
 ├── .gitignore
 ├── conftest.py
 └── requirements.txt
 ```
 
-*Note: Generated reports, screenshots, and environment files are excluded from version control where configured. The `pages` directory is reserved for Page Object Model implementation.*
+Generated screenshots, reports, virtual environments, cache files, and the local `.env` file are excluded from version control by `.gitignore`.
 
-## Getting Started
-
-### Prerequisites
-
-- Python 3.12 or a compatible Python version
-- Git
-- pip
+## Run It Locally
 
 ### 1. Clone the repository
 
@@ -90,14 +96,21 @@ cd playwright-python-sdet-framework
 
 ### 2. Create and activate a virtual environment
 
-**Windows:**
+**Windows (Command Prompt):**
 
-```bash
+```bat
 python -m venv .venv
-.venv\Scripts\activate
+.venv\\Scripts\\activate
 ```
 
-### 3. Install dependencies
+**macOS / Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install dependencies and Chromium
 
 ```bash
 python -m pip install --upgrade pip
@@ -105,58 +118,72 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-### 4. Configure environment variables
+### 4. Run the test suite
 
-Create a `.env` file in the project root:
-
-```env
-API_BASE_URL=https://jsonplaceholder.typicode.com
-```
-
-### 5. Run the test suite
+Run all UI and API tests:
 
 ```bash
 pytest -v
 ```
 
-### 6. Generate an HTML test report
+Run only UI tests:
 
 ```bash
+pytest -v tests/test_login.py tests/test_products.py tests/test_cart.py tests/test_checkout.py
+```
+
+Run only API tests:
+
+```bash
+pytest -v tests/test_api.py
+```
+
+### 5. Generate an HTML report (optional)
+
+Create the reports directory first, then run:
+
+**Windows (Command Prompt):**
+
+```bat
+if not exist reports mkdir reports
 pytest -v --html=reports/report.html --self-contained-html
 ```
 
-Ensure the `reports` directory exists before generating the report.
+**macOS / Linux:**
+
+```bash
+mkdir -p reports
+pytest -v --html=reports/report.html --self-contained-html
+```
+
+Open `reports/report.html` in a browser to view the report. Generated reports are local artifacts and are ignored by Git.
 
 ## Continuous Integration
 
-This project uses **GitHub Actions** to execute the test suite automatically on pushes and pull requests.
+The workflow at [`.github/workflows/tests.yml`](.github/workflows/tests.yml) runs on pushes and pull requests. It sets up Python 3.12, installs the project dependencies, installs Playwright with Chromium system dependencies, and executes `pytest -v`.
 
-The workflow installs dependencies, sets up Playwright with Chromium, and runs the tests in an Ubuntu environment.
+See the [Actions tab](https://github.com/kushagrajaiswal07/playwright-python-sdet-framework/actions) for workflow runs and their results.
 
-**CI Status:** The GitHub Actions workflow has successfully completed with a passing status.
+## Skills Demonstrated
 
-## Learning Objectives
+- Functional UI test automation
+- REST API testing and response validation
+- Pytest fixtures, assertions, and parameterized tests
+- Page Object Model fundamentals
+- Reusable test data and configuration
+- Failure evidence through screenshots
+- Local test reporting
+- GitHub Actions CI workflow
 
-This project demonstrates practical experience with:
+## Potential Next Improvements
 
-- Functional UI testing
-- REST API testing
-- Test case design and assertions
-- Reusable fixtures and test data
-- Test automation and debugging
-- Test reporting
-- Git-based collaboration workflows
-- CI pipeline configuration
-
-## Future Improvements
-
-- Implement the Page Object Model (POM)
+- Add more negative and boundary-value test cases
+- Improve configuration so local and CI environments use the same settings
+- Publish test reports as GitHub Actions artifacts
 - Add API schema validation
-- Improve test data management
-- Add parameterized and negative test scenarios
-- Publish test reports as CI artifacts
-- Add Docker-based test execution
-- Expand automated regression coverage
+- Expand browser and test-data coverage
+- Add database validation with SQL
+- Explore Docker-based test execution
 
 ## Author
 
@@ -164,4 +191,3 @@ This project demonstrates practical experience with:
 
 - GitHub: [@kushagrajaiswal07](https://github.com/kushagrajaiswal07)
 - LinkedIn: [kushagra-jaiswal-ai](https://linkedin.com/in/kushagra-jaiswal-ai)
-
